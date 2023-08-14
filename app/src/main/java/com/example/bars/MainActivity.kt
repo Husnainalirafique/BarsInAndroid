@@ -1,15 +1,13 @@
 package com.example.bars
 
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.example.bars.databinding.ActivityMainBinding
@@ -17,7 +15,6 @@ import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -29,14 +26,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun setOnClickListener() {
         binding.toolbar.setNavigationOnClickListener {
-            Toast.makeText(this@MainActivity, "Navigation Menu Clicked", Toast.LENGTH_SHORT).show()
+            val snackbar = Snackbar.make(window.decorView,"Navigation Menu Clicked",Snackbar.LENGTH_SHORT).show()
         }
 
         binding.btnSnackbar.setOnClickListener {
-
             showSnackBar(this, it, resources, "Undo the Deleted item", "Undo") {
                 Toast.makeText(this@MainActivity, "Done", Toast.LENGTH_SHORT).show()
             }
@@ -45,6 +40,32 @@ class MainActivity : AppCompatActivity() {
         binding.btnPopUp.setOnClickListener {
             showPopUpMenu(it)
         }
+
+        binding.simpleSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val snackbar = Snackbar.make(window.decorView,"Progress is ${seekBar?.progress}%",Snackbar.LENGTH_SHORT).show()
+            }
+
+        })
+
+        binding.discreteSeekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val snackbar = Snackbar.make(window.decorView,"Progress is ${seekBar?.progress}%",Snackbar.LENGTH_SHORT).show()
+            }
+
+        })
     }
 
     private fun showPopUpMenu(view: View){
@@ -68,22 +89,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbarmenu, menu)
-        val isLightMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_NO
-        if (isLightMode) {
-            if (menu != null) {
-                for (i in 0 until menu.size()) {
-                    val menuItem = menu.getItem(i)
-                    val spanString = SpannableString(menuItem.title)
-                    spanString.setSpan(ForegroundColorSpan(Color.BLACK), 0, spanString.length, 0)
-                    menuItem.title = spanString
-                }
-            }
-        }
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-         when (item.itemId) {
+        when (item.itemId) {
             R.id.add -> {
                 Toast.makeText(this@MainActivity, "Add Clicked", Toast.LENGTH_SHORT).show()
                 return true
@@ -106,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     override fun onContextItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.actionDelete -> {
-//                Toast.makeText(this@MainActivity, "Deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Deleted", Toast.LENGTH_SHORT).show()
                 return true
             }
 
@@ -116,11 +126,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onContextItemSelected(item)
-
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.unbind()
     }
 }
-
-
-
 
 
